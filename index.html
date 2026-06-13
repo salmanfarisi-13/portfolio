@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI}
+body{background:#0b152d;color:#e5e7eb;overflow-x:hidden}
+
+/* HERO */
+.hero{
+    position:relative;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    background:linear-gradient(to bottom,#020617,#000);
+    overflow:hidden;
+}
+
+/* CLOUDS */
+.cloud{
+    position:absolute;
+    background:rgba(255,255,255,0.05);
+    border-radius:50%;
+    filter:blur(20px);
+}
+
+.cloud1{width:300px;height:120px;top:20%;left:-300px;animation:moveCloud 60s linear infinite}
+.cloud2{width:400px;height:150px;top:40%;left:-400px;animation:moveCloud 90s linear infinite}
+.cloud3{width:250px;height:100px;top:60%;left:-250px;animation:moveCloud 70s linear infinite}
+
+@keyframes moveCloud{
+    from{transform:translateX(0)}
+    to{transform:translateX(150vw)}
+}
+
+.hero img{width:130px;height:130px;border-radius:50%;border:3px solid #3b82f6;margin-bottom:15px;object-fit:cover;z-index:2}
+.hero h1{font-size:32px;margin-bottom:15px;z-index:2}
+.hero button{padding:12px 25px;background:#3b82f6;border:none;border-radius:6px;color:white;cursor:pointer;z-index:2}
+.hero button:hover{background:#2563eb}
+
+/* RAIN */
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1}
+
+/* LIGHTNING */
+.flash{position:absolute;top:0;left:0;width:100%;height:100%;background:white;opacity:0;pointer-events:none;z-index:1}
+
+/* NAV */
+nav{display:flex;justify-content:center;gap:20px;background:#020617;padding:15px;position:fixed;width:100%;top:0;z-index:10}
+nav a{color:#94a3b8;text-decoration:none;cursor:pointer}
+nav a:hover{color:#3b82f6}
+
+/* PAGES */
+.page{
+    display:none;
+    position:absolute;
+    width:100%;
+    height:100vh;
+    top:0;
+    left:0;
+
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+
+    opacity:0;
+    transform:translateX(100%);
+    transition:all 0.5s ease;
+}
+
+.page.active{
+    display:flex;
+    opacity:1;
+    transform:translateX(0);
+    z-index:2;
+}
+
+.page.exit-left{
+    transform:translateX(-100%);
+    opacity:0;
+}
+
+.page.exit-right{
+    transform:translateX(100%);
+    opacity:0;
+}
+
+.page{
+    will-change:transform, opacity;
+}
+
+@keyframes glowIn{
+    from{filter:blur(5px);opacity:0}
+    to{filter:blur(0);opacity:1}
+}
+
+#pages-container{
+    position:relative;
+    overflow:hidden;
+    height:100vh;
+}
+.content{
+    width:100%;
+    max-width:700px;
+}
+
+h2{
+    font-size:32px;
+    margin-bottom:10px;
+    color:#3b82f6;
+    letter-spacing:1px;
+}
+
+h2::after{
+    content:"";
+    display:block;
+    width:60px;
+    height:3px;
+    background:#3b82f6;
+    margin:10px auto 0;
+    border-radius:2px;
+}
+
+.card{
+    background:rgba(2,6,23,0.8);
+    padding:25px;
+    border-radius:14px;
+    border:1px solid rgba(59,130,246,0.2);
+    margin-top:20px;
+
+    backdrop-filter:blur(10px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
+
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 15px 40px rgba(59,130,246,0.2);
+}
+
+.nav-btn{
+    margin-top:25px;
+    display:flex;
+    gap:10px;
+    justify-content:center;
+}
+
+.nav-btn button{
+    padding:10px 20px;
+    border:none;
+    border-radius:6px;
+    background:#3b82f6;
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.nav-btn button:hover{
+    background:#2563eb;
+    transform:translateY(-2px);
+}
+
+.edu-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(250px,1fr));
+    gap:20px;
+    margin-top:20px;
+}
+
+.edu-card{
+    background:#020617;
+    border-radius:12px;
+    overflow:hidden;
+    border:1px solid rgba(59,130,246,0.2);
+    transition:0.4s;
+    cursor:pointer;
+}
+
+.edu-card img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+}
+
+.edu-info{
+    padding:15px;
+}
+
+.edu-info h3{
+    color:#3b82f6;
+    margin-bottom:5px;
+}
+
+.edu-info p{
+    font-size:14px;
+    color:#94a3b8;
+}
+
+.edu-card:hover{
+    transform:translateY(-8px) scale(1.02);
+    box-shadow:0 15px 40px rgba(59,130,246,0.3);
+}
+.edu-card{
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+@media screen and (max-width: 768px) {
+
+    /* ===== GLOBAL ===== */
+    body {
+        font-size: 14px;
+    }
+
+    /* ===== PAGE ===== */
+    .page {
+        height: auto;
+        min-height: 100vh;
+        padding: 80px 15px 40px;
+        justify-content: flex-start;
+    }
+
+    .content {
+        max-width: 100%;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    /* ===== NAVBAR ===== */
+    nav {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    nav a {
+        font-size: 13px;
+    }
+
+    /* ===== CARD ===== */
+    .card {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    /* ===== EDU / GRID ===== */
+    .edu-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .edu-card {
+        font-size: 14px;
+    }
+
+    .edu-info h3 {
+        font-size: 16px;
+    }
+
+    .edu-info p {
+        font-size: 13px;
+    }
+
+    /* ===== HERO ===== */
+    .hero h1 {
+        font-size: 22px;
+    }
+
+    .hero h2 {
+        font-size: 16px;
+    }
+
+    .hero img {
+        width: 100px;
+        height: 100px;
+    }
+
+    /* ===== BUTTON ===== */
+    .nav-btn {
+        flex-direction: column;
+    }
+
+    .nav-btn button {
+        width: 100%;
+    }
+}
+
+/* HP kecil */
+@media screen and (max-width: 480px) {
+    h2 {
+        font-size: 20px;
+    }
+
+    nav {
+        font-size: 12px;
+    }
+
+    .hero button {
+        padding: 10px 18px;
+        font-size: 13px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+
+<div id="landing" class="hero">
+    <!-- CLOUDS -->
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <div class="cloud cloud3"></div>
+
+    <canvas id="rain"></canvas>
+    <div class="flash" id="flash"></div>
+
+    <img src="farisi.jpeg">
+    <h1>Salman Farisi</h1>
+    <h2>Mahasiswa Teknik Informatika</h2>
+    <button onclick="flashEffect(); enterSite()">Lihat Profil Saya</button>
+</div>
+
+<div id="main" style="display:none;">
+
+<nav>
+    <a onclick="flashEffect(); showPage('home')">Beranda</a>
+    <a onclick="showPage('profil', this)">Profil</a>
+    <a onclick="showPage('pendidikan', this)">Pendidikan</a>
+    <a onclick="showPage('keahlian', this)">Keahlian</a>
+    <a onclick="showPage('hobi', this)">Hobi</a>
+    <a onclick="showPage('project', this)">Project</a>
+    <a onclick="showPage('kontak', this)">Kontak</a>
+</nav>
+
+<div id="pages-container">
+
+    <div id="home" class="page active">
+    <div class="content">
+        <h2>Beranda</h2>
+        <div class="card">Selamat datang di portfolio saya.</div>
+
+        <div class="nav-btn">
+<button onclick="flashEffect(); nextPage()">Berikutnya →</button>
+        </div>
+    </div>
+</div>
+
+    <div id="profil" class="page">
+    <div class="content">
+        <h2>Profil</h2>
+        <div class="card">Saya Salman Farisi, seorang mahasiswa jurusan Teknik Informatika yang memiliki minat besar di dunia teknologi dan pengembangan digital.
+
+Saat ini saya sedang berada dalam tahap belajar dan mengembangkan kemampuan di bidang pemrograman dan coding, khususnya untuk membangun website dan aplikasi sederhana hingga menengah.
+
+Di luar aktivitas akademik, saya memiliki hobi gaming, yang juga membantu saya dalam melatih fokus, strategi, dan problem solving.
+
+Selain itu, saya juga aktif membuat konten affiliate, sebagai salah satu cara untuk belajar dunia digital marketing serta memahami bagaimana sistem promosi dan monetisasi online bekerja.
+
+Saya terus berusaha untuk meningkatkan skill, memperluas pengalaman, dan mengembangkan diri agar bisa menjadi seorang developer yang kompeten di masa depan.</div>
+
+        <div class="nav-btn">
+            <button onclick="prevPage()">← Sebelumnya</button>
+            <button onclick="nextPage()">Berikutnya →</button>
+        </div>
+    </div>
+</div>
+
+   <div id="pendidikan" class="page">
+    <div class="content">
+        <h2>Pendidikan</h2>
+
+        <div class="edu-container">
+
+            <div class="edu-card">
+                <img src="min.jpeg">
+                <div class="edu-info">
+                    <h3>MIN 40 PIDIE</h3>
+                </div>
+            </div>
+
+            <div class="edu-card">
+                <img src="MTs.jpeg">
+                <div class="edu-info">
+                    <h3>MTs DARUN NAJAH</h3>
+                </div>
+            </div>
+
+            <div class="edu-card">
+                <img src="MAS.jpeg">
+                <div class="edu-info">
+                    <h3>MAS DARUN NAJAH</h3>
+                </div>
+            </div>
+
+            <div class="edu-card">
+                <img src="kuliah.jpeg">
+                <div class="edu-info">
+                    <h3>Universitas Jabal Ghafur</h3>
+                </div>
+            </div>
+
+        </div>
+
+    <div class="nav-btn">
+        <button onclick="prevPage()">← Sebelumnya</button>
+        <button onclick="nextPage()">Berikutnya →</button>
+    </div>
+</div>
+</div>
+    <div id="keahlian" class="page">
+    <div class="content">
+        <h2>Keahlian</h2>
+
+        <div class="edu-container">
+
+            <div class="edu-card">
+                <div class="edu-info">
+                    <h3>Web Development</h3>
+                    <p>HTML, CSS, JavaScript dasar. Membangun website sederhana hingga interaktif.</p>
+                </div>
+            </div>
+
+            <div class="edu-card">
+                <div class="edu-info">
+                    <h3>UI Design Dasar</h3>
+                    <p>Mendesain tampilan website yang clean, modern, dan user-friendly.</p>
+                </div>
+            </div>
+
+            <div class="edu-card">
+                <div class="edu-info">
+                    <h3>Gaming Strategy</h3>
+                    <p>Terbiasa berpikir cepat, strategi, dan adaptasi dalam game.</p>
+                </div>
+            </div>
+
+            <div class="edu-card">
+                <div class="edu-info">
+                    <h3>Content Affiliate</h3>
+                    <p>Membuat dan mempelajari konten digital marketing & affiliate online.</p>
+                </div>
+            </div>
+
+        </div>
+
+       <div class="nav-btn">
+        <button onclick="prevPage()">← Sebelumnya</button>
+        <button onclick="nextPage()">Berikutnya →</button>
+    </div>
+</div>
+</div>
+
+   <div id="hobi" class="page">
+    <h2>Hobi</h2>
+    <div class="edu-card">
+    <div class="edu-info">
+        <h3>Web Development & Coding</h3>
+        <p>Belajar pemrograman dasar dan pengembangan website menggunakan HTML, CSS, dan JavaScript.</p>
+    </div>
+</div>
+
+<div class="edu-card">
+    <div class="edu-info">
+        <h3>Gaming & Strategic Thinking</h3>
+        <p>Terbiasa berpikir cepat, menyusun strategi, dan meningkatkan kemampuan problem solving melalui game.</p>
+    </div>
+</div>
+
+<div class="edu-card">
+    <div class="edu-info">
+        <h3>Content Affiliate & Digital Marketing</h3>
+        <p>Membuat dan mengembangkan konten affiliate untuk memahami pemasaran digital dan monetisasi online.</p>
+    </div>
+</div>
+    <div class="nav-btn">
+        <button onclick="prevPage()">← Sebelumnya</button>
+        <button onclick="nextPage()">Berikutnya →</button>
+    </div>
+</div>
+</div>
+
+    <div id="project" class="page">
+    <div class="content">
+        <h2>Karya & Project</h2>
+
+        <div class="edu-container">
+
+            <a href="https://salmanfarisi-13.github.io/Donghua-Flixxx/" target="_blank" class="edu-card">
+                <img src="donghua.jpg">
+                <div class="edu-info">
+                    <h3>Donghua Flix</h3>
+                    <p>Klik untuk melihat website</p>
+                </div>
+            </a>
+
+        </div>
+
+        <div class="edu-container">
+
+            <a href="https://salmanfarisi-13.github.io/playstation/" target="_blank" class="edu-card">
+                <img src="FIFA.jpg">
+                <div class="edu-info">
+                    <h3>Playstation</h3>
+                    <p>Klik untuk melihat website</p>
+                </div>
+            </a>
+
+        </div>
+
+        <div class="edu-container">
+
+            <a href="https://salmanfarisi-13.github.io/Tracking-Leads/" target="_blank" class="edu-card">
+                <img src="tracking leads.jpg">
+                <div class="edu-info">
+                    <h3>Tracking Leads</h3>
+                    <p>Klik untuk melihat website</p>
+                </div>
+            </a>
+
+        </div>
+
+        <div class="nav-btn">
+            <button onclick="prevPage()">← Sebelumnya</button>
+            <button onclick="nextPage()">Berikutnya →</button>
+        </div>
+    </div>
+</div>
+
+    <div id="kontak" class="page">
+    <div class="content">
+        <h2>Kontak</h2>
+
+        <div class="edu-container">
+
+            <!-- EMAIL -->
+            <a href="mailto:salmanfarisi352@gmail.com" class="edu-card">
+                <div class="edu-info">
+                    <h3>Email</h3>
+                    <p>salmanfarisi352@gmail.com</p>
+                </div>
+            </a>
+
+            <!-- WHATSAPP -->
+            <a href="https://wa.me/6289525720450" target="_blank" class="edu-card">
+                <div class="edu-info">
+                    <h3>WhatsApp</h3>
+                    <p>+62 89525720450</p>
+                </div>
+            </a>
+
+            <!-- INSTAGRAM -->
+            <a href="https://www.instagram.com/faariisyyy/" target="_blank" class="edu-card">
+                <div class="edu-info">
+                    <h3>Instagram</h3>
+                    <p>@faariisyyy</p>
+                </div>
+            </a>
+
+        
+            <!-- TIKTOK -->
+            <a href="https://www.tiktok.com/@outfit.kalcer4" target="_blank" class="edu-card">
+                <div class="edu-info">
+                    <h3>TikTok</h3>
+                    <p>@outfit.kalcer4</p>
+                </div>
+            </a>
+
+        <div class="nav-btn">
+            <button onclick="prevPage()">← Sebelumnya</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+function enterSite(){
+    document.getElementById('landing').style.display='none';
+    document.getElementById('main').style.display='block';
+}
+
+/* ===== PAGE SYSTEM ===== */
+const pages = ['home','profil','pendidikan','keahlian','hobi','project','kontak'];
+let currentIndex = 0;
+
+function showPage(pageId, el=null){
+    let newIndex = pages.indexOf(pageId);
+    let currentPage = document.querySelector('.page.active');
+    let nextPage = document.getElementById(pageId);
+
+    if(!currentPage || !nextPage) return;
+
+    // arah animasi
+    if(newIndex > currentIndex){
+        currentPage.classList.add('exit-left');
+    } else if(newIndex < currentIndex){
+        currentPage.classList.add('exit-right');
+    }
+
+    setTimeout(()=>{
+        currentPage.classList.remove('active','exit-left','exit-right');
+        nextPage.classList.add('active');
+
+        currentIndex = newIndex;
+
+        // update navbar active
+        document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+        if(el) el.classList.add('active');
+    },300);
+}
+
+/* NEXT & PREV */
+function nextPage(){
+    if(currentIndex < pages.length - 1){
+        let next = currentIndex + 1;
+        showPage(pages[next], document.querySelectorAll('nav a')[next]);
+    }
+}
+
+function prevPage(){
+    if(currentIndex > 0){
+        let prev = currentIndex - 1;
+        showPage(pages[prev], document.querySelectorAll('nav a')[prev]);
+    }
+}
+
+function flashEffect(){
+    const f = document.getElementById('flash');
+    f.style.transition = "none";
+    f.style.opacity = 1;
+
+    setTimeout(() => {
+        f.style.transition = "opacity 0.3s ease";
+        f.style.opacity = 0;
+    }, 80);
+}
+// RAIN
+const canvas=document.getElementById('rain');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+let rainDrops=[];
+for(let i=0;i<200;i++){
+    rainDrops.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,l:Math.random()*20,xs:-2+Math.random()*4,ys:10+Math.random()*10});
+}
+function drawRain(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.strokeStyle='rgba(174,194,224,0.5)';
+    ctx.beginPath();
+    rainDrops.forEach(r=>{ctx.moveTo(r.x,r.y);ctx.lineTo(r.x+r.xs,r.y+r.l);});
+    ctx.stroke();
+    rainDrops.forEach(r=>{r.x+=r.xs;r.y+=r.ys;if(r.y>canvas.height){r.x=Math.random()*canvas.width;r.y=-20;}});
+}
+setInterval(drawRain,30);
+
+// LIGHTNING
+setInterval(()=>{
+    let f=document.getElementById('flash');
+    f.style.opacity=0.8;
+    setTimeout(()=>f.style.opacity=0,100);
+},5000);
+</script>
+
+</body>
+</html>
